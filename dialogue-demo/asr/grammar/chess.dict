@@ -1,0 +1,39 @@
+0	[play]	p r e i
+0	[move]	m u: b
+0	[go]	g o:
+0	[go]	g o u
+1	[king]	k i N
+1	[king]	k i N g
+1	[queen]	k u: i: N
+1	[queen]	k u i: N
+1	[bishop]	b i sh o p
+1	[rook]	r u: k
+1	[knight]	n a i t
+1	[pawn]	p o: n
+2	[a]	e:
+2	[b]	b i
+2	[c]	s i:
+2	[d]	d i
+2	[e]	i:
+2	[f]	e f
+2	[g]	j i:
+2	[h]	e ch
+3	[one]	w a N
+3	[two]	t u:
+3	[three]	s r i:
+3	[four]	f o:
+3	[five]	f a i b
+3	[six]	s i k s
+3	[seven]	s e b e N
+3	[eight]	e i t
+4	[castle]	k a s o r
+4	[castle]	k a s u r
+4	[castle]	k a s e r
+4	[castle]	k a s a r
+5	[silB]	silB
+6	[silE]	silE
+7	[sp]	sp
+7	[sp]	sp
+7	[uh]	a:
+7	[um]	a: m
+7	[ah]	a
