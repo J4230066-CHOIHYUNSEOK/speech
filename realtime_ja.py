@@ -1,3 +1,5 @@
+## English recognition 
+## needs to install whisper in 仮想環境
 import whisper
 import sounddevice as sd
 import numpy as np
@@ -8,7 +10,7 @@ import time
 model = whisper.load_model("medium")
 rate = 16000
 
-def record(seconds=5):
+def record(seconds=5):　#録音は5秒間隔
     print("🎙️ Recording...")
     audio = sd.rec(int(seconds * rate), samplerate=rate, channels=1, dtype=np.float32)
     sd.wait()
