@@ -97,11 +97,19 @@ class FSMController:
             self.log.write("IMAGINE: stop (timer reset, stay in imagine)", tag="INFO")
             return
 
+        if lowered == "back":
+            if self.imag.back():
+                self.log.write("IMAGINE: reverted one imagined move", tag="INFO")
+            else:
+                self.log.write("IMAGINE: nothing to undo", tag="INFO")
+            return
+
         if lowered == "take":
             best = self.imag.bestmove()
             if best:
                 self.imag.make_bestmove(best)
                 self.log.write(f"Engine best move (imagine) → {best}")
+                self.log.write_move(f"Imagine(Engine): {best}")
             else:
                 self.log.write("Engine best move unavailable.")
             return
@@ -109,6 +117,7 @@ class FSMController:
         try:
             self.imag.move(text)
             self.log.write(f"Imagine move: {text}")
+            self.log.write_move(f"Imagine: {text}")
         except Exception:
             self.log.write(f"Invalid imagine move: {text}")
 
@@ -128,6 +137,7 @@ class FSMController:
         try:
             info = self.board.move(move_text)
             self.log.write(f"Move accepted: {info['san']} ({info['uci']})")
+            self.log.write_move(f"Player: {info['san']} ({info['uci']})")
             self.log.write(f"Board:\n{self.board.board}", tag="BOARD")
             return True
         except Exception:
@@ -138,6 +148,7 @@ class FSMController:
         reply = self.board.engine_reply()
         if reply:
             self.log.write(f"Engine move: {reply['san']} ({reply['uci']})", tag="ENGINE")
+            self.log.write_move(f"Engine: {reply['san']} ({reply['uci']})")
             self.log.write(f"Board:\n{self.board.board}", tag="BOARD")
         else:
             self.log.write("Engine move unavailable or illegal.", tag="ENGINE")
@@ -168,3 +179,14 @@ class FSMController:
     def _on_exit_state(self, state: State | None):
         if state == State.IMAGINE:
             self.imag.reset()
+
+    # ------------------------------------------------------------
+    # State helpers for GUI
+    # ------------------------------------------------------------
+    def get_state(self) -> State:
+        return self.state
+
+    def get_display_board(self):
+        if self.state == State.IMAGINE and self.imag.board:
+            return self.imag.board
+        return self.board.board

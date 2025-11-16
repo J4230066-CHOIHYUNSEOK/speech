@@ -7,15 +7,18 @@ class ImagineSimulator:
         self.engine = engine or StockfishEngine()
         self.base_board: chess.Board | None = None
         self.board: chess.Board | None = None
+        self._history: list[chess.Move] = []
 
     def start(self, board: chess.Board):
         """Capture the current real board as the base for imagination."""
         self.base_board = board.copy()
         self.board = board.copy()
+        self._history = []
 
     def reset(self):
         if self.base_board:
             self.board = self.base_board.copy()
+        self._history = []
 
     def move(self, mov: str):
         if self.board is None:
@@ -30,6 +33,7 @@ class ImagineSimulator:
             raise ValueError("Illegal imagine move")
 
         self.board.push(candidate)
+        self._history.append(candidate)
 
     def bestmove(self):
         if self.board is None:
@@ -45,3 +49,11 @@ class ImagineSimulator:
         if move not in self.board.legal_moves:
             return
         self.board.push(move)
+        self._history.append(move)
+
+    def back(self):
+        if self.board is None or not self._history:
+            return False
+        self.board.pop()
+        self._history.pop()
+        return True

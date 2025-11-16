@@ -12,11 +12,20 @@ class Logger:
 
     def write(self, text: str, tag: str = "FSM"):
         timestamp = datetime.now().strftime("%H:%M:%S")
-        entry = f"[{timestamp}] {text}"
+        entry = f"[{timestamp}] [{tag}] {text}"
         self._history.append(entry)
         print(entry)
         if self.gui:
-            self.gui.append_history(f"[{tag}] {text}")
+            self.gui.show_fsm_message(text, tag=tag)
+
+    def write_move(self, text: str):
+        """Log a move to history without cluttering the FSM message panel."""
+        timestamp = datetime.now().strftime("%H:%M:%S")
+        entry = f"[{timestamp}] [MOVE] {text}"
+        self._history.append(entry)
+        print(entry)
+        if self.gui:
+            self.gui.append_move_history(text)
 
     def get_history(self):
         return list(self._history)

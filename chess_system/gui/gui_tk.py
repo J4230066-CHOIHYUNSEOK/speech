@@ -11,8 +11,12 @@ from tkinter import ttk
 
 import chess
 import chess.svg
-from PIL import Image, ImageTk
 import cairosvg
+import cv2
+import numpy as np
+from PIL import Image, ImageTk
+
+from fsm.states import State
 
 
 class ChessGUI:
@@ -25,8 +29,11 @@ class ChessGUI:
         self.root = root
         self.fsm = fsm_controller
         self.timer = timer
+        self._last_state = self.fsm.get_state()
 
-        self.root.title("Chess Voice System GUI")
+        self.root.title("Chess Voice System")
+        self.root.grid_columnconfigure(0, weight=1)
+        self.root.grid_columnconfigure(1, weight=1)
 
         # 盤面表示用ラベル
         self.board_label = tk.Label(self.root)
@@ -38,10 +45,10 @@ class ChessGUI:
 
         # Move 履歴
         tk.Label(side, text="History").pack(anchor="w")
-        self.history_box = tk.Text(side, width=32, height=20)
+        self.history_box = tk.Text(side, width=32, height=20, state="disabled")
         self.history_box.pack(pady=4)
 
-        # コマンド入力欄
+        # コマンド入力欄 いつか消す
         tk.Label(side, text="Command Input").pack(anchor="w")
         self.cmd_entry = tk.Entry(side)
         self.cmd_entry.pack(fill="x", pady=4)
@@ -60,6 +67,15 @@ class ChessGUI:
 
         self.timer_label = tk.Label(side, text=f"{self.timer.remaining:.1f} s")
         self.timer_label.pack(anchor="w")
+
+        bottom = tk.Frame(self.root)
+        bottom.grid(row=1, column=0, columnspan=2, sticky="ew", padx=10, pady=(0, 10))
+        bottom.grid_columnconfigure(0, weight=1)
+        tk.Label(bottom, text="FSM Messages").grid(row=0, column=0, sticky="w")
+        self.message_box = tk.Text(
+            bottom, width=80, height=3, wrap="word", state="disabled", font=("Consolas",16)
+        )
+        self.message_box.grid(row=1, column=0, sticky="ew")
 
         # 盤面画像保持
         self.board_img = None
@@ -80,28 +96,27 @@ class ChessGUI:
         if text == "":
             return
 
-        # 1) 履歴に表示
-        self.append_history(f"[Input] {text}")
-
-        # 2) FSM に渡す
+        # FSM に渡す
         self.fsm.handle_input(text)
 
-        # 3) ボードが変化していれば更新
+        # ボードが変化していれば更新
         self.update_board()
 
-        # 4) タイマーをリセット（ROOT/PLAYなどのモードで使う）
+        # タイマーをリセット（ROOT/PLAYなどのモードで使う）
         self.timer.reset()
 
     # ---------------------------------------------------------
     # ボード描画更新
     # ---------------------------------------------------------
     def update_board(self):
-        board = self.fsm.board.board  # BoardManager の chess.Board
+        board = self.fsm.get_display_board()
 
         svg_data = chess.svg.board(board).encode("utf-8")
         png_bytes = cairosvg.svg2png(bytestring=svg_data)
 
-        img = Image.open(io.BytesIO(png_bytes))
+        img = Image.open(io.BytesIO(png_bytes)).convert("RGB")
+        if self.fsm.get_state() == State.IMAGINE:
+            img = self._apply_imagine_tint(img)
         img = img.resize((400, 400), Image.LANCZOS)
 
         self.board_img = ImageTk.PhotoImage(img)
@@ -110,9 +125,12 @@ class ChessGUI:
     # ---------------------------------------------------------
     # Move履歴 / ログ追加
     # ---------------------------------------------------------
-    def append_history(self, text):
-        self.history_box.insert("end", text + "\n")
-        self.history_box.see("end")
+    def append_move_history(self, text):
+        self._write_text(self.history_box, text + "\n", append=True)
+
+    def show_fsm_message(self, text: str, tag: str = "FSM"):
+        """Display only the latest FSM message (clears previous content)."""
+        self._write_text(self.message_box, f"[{tag}] {text}", append=False)
 
     # ---------------------------------------------------------
     # タイマーとGUIバーの同期
@@ -123,6 +141,27 @@ class ChessGUI:
         self.timer_bar.config(maximum=self.timer.max_time)
         self.timer_var.set(self.timer.remaining)
         self.timer_label.config(text=f"{self.timer.remaining:.1f} s")
+        current_state = self.fsm.get_state()
+        if current_state != self._last_state:
+            self._last_state = current_state
+            self.update_board()
 
         # 100msごとに呼ぶ
         self.root.after(100, self._update_timer_bar)
+
+    def _apply_imagine_tint(self, image: Image.Image) -> Image.Image:
+        """Apply a subtle blue overlay using OpenCV so IMAGINE mode is obvious."""
+        rgb_array = np.array(image)
+        bgr = cv2.cvtColor(rgb_array, cv2.COLOR_RGB2BGR)
+        overlay = np.full(bgr.shape, (255, 180, 80), dtype=np.uint8) 
+        tinted = cv2.addWeighted(bgr, 0.65, overlay, 0.35, 0)
+        tinted_rgb = cv2.cvtColor(tinted, cv2.COLOR_BGR2RGB)
+        return Image.fromarray(tinted_rgb)
+
+    def _write_text(self, widget: tk.Text, text: str, append: bool):
+        widget.config(state="normal")
+        if not append:
+            widget.delete("1.0", "end")
+        widget.insert("end", text)
+        widget.see("end")
+        widget.config(state="disabled")

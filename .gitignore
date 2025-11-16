@@ -1,0 +1,35 @@
+# Python cache / artifacts
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.py,cover
+*.pyc.*
+.Python
+
+
+# Packaging / build
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# Logs / coverage / tooling
+*.log
+*.sqlite3
+.coverage
+.coverage.*
+coverage.xml
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# IDE / editor
+.idea/
+.vscode/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
