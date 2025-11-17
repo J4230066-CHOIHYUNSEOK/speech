@@ -78,11 +78,11 @@ def extract_command(text: str, state: str):
                 return f"play {move}"
             return None
 
-        # bare move (no play prefix)
-        move = parse_move(words)
-        if move:
-            return move
-        return None
+        # # bare move (no play prefix)
+        # move = parse_move(words)
+        # if move:
+        #     return move
+        # return None
 
     # ======================================================
     # IMAGINE : chess moves + imagine specific commands

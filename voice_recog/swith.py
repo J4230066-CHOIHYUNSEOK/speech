@@ -32,7 +32,7 @@ def record_wake_sample():
         user_input = input("Press m and Enter to start recording wake sample: ").strip().lower()
         if user_input == "m":
             break
-    lwake.record(str(WAKE_SAMPLE), duration=2, trim_silence=True)
+    lwake.record(str(WAKE_SAMPLE), duration=2, trim_silence=False)
     print(f"[WAKE] Sample saved to {WAKE_SAMPLE}")
 
 
@@ -54,7 +54,7 @@ def wait_for_wake_word():
         try:
             lwake.listen(
                 str(WAKE_REF_DIR),
-                threshold=0.1,
+                threshold=0.05,
                 method="embedding",
                 callback=handle_detection,
             )
@@ -105,7 +105,7 @@ def fsm_transition(state, cmd):
         return "ROOT"
 
     if state == "IMAGINE":
-        if cmd == "back":
+        if cmd == "return":
             return "ROOT"
         return "IMAGINE"
 
