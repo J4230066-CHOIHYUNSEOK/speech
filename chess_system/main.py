@@ -22,6 +22,22 @@ def main():
     root = tk.Tk()
     gui = ChessGUI(root, fsm, timer)
     logger.attach_gui(gui)
+
+    voice_bridge = None
+    try:
+        from voice_bridge import VoiceBridge
+
+        voice_bridge = VoiceBridge(root, gui, fsm, logger)
+        voice_bridge.start()
+    except Exception as e:
+        logger.write(f"Voice bridge disabled: {e}", tag="VOICE")
+
+    def _on_close():
+        if voice_bridge:
+            voice_bridge.stop()
+        root.destroy()
+
+    root.protocol("WM_DELETE_WINDOW", _on_close)
     root.mainloop()
 
 

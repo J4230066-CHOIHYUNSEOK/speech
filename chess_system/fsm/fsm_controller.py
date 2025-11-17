@@ -3,7 +3,6 @@ from .states import State
 
 class FSMController:
     ROOT_TIMEOUT = 10.0
-    PLAY_TIMEOUT = 10.0
     IMAGINE_TIMEOUT = 30.0
 
     def __init__(self, board_manager, imagine_sim, logger, timer, wake_detector):
@@ -29,17 +28,12 @@ class FSMController:
             self._handle_wait_wake(text)
         elif self.state == State.ROOT:
             self._handle_root(text)
-        elif self.state == State.PLAY:
-            self._handle_play(text)
         elif self.state == State.IMAGINE:
             self._handle_imagine(text)
 
     def _handle_timeout(self):
         if self.state == State.ROOT:
             self.log.write("ROOT timeout → WAIT_WAKE")
-            self._set_state(State.WAIT_WAKE)
-        elif self.state == State.PLAY:
-            self.log.write("PLAY timeout → WAIT_WAKE")
             self._set_state(State.WAIT_WAKE)
         elif self.state == State.IMAGINE:
             self.log.write("IMAGINE timeout → WAIT_WAKE")
@@ -50,7 +44,7 @@ class FSMController:
     # ============================================================
     def _handle_wait_wake(self, text: str):
         if self.wake_detector.detect(text):
-            self.log.write("Wakeword detected → ROOT_COMMAND_MODE")
+            self.log.write("Wakeword detected → ROOT")
             self._set_state(State.ROOT)
         else:
             self.log.write("Waiting for wakeword. (type 'hey chess')", tag="INFO")
@@ -59,30 +53,19 @@ class FSMController:
         self.timer.reset()
         lowered = text.lower()
 
-        if lowered.startswith("play"):
-            move = text[4:].strip()
-            self._set_state(State.PLAY)
-            if move:
-                self._process_play_move(move)
-            else:
-                self.log.write("PLAY: enter your move (SAN or UCI).", tag="INFO")
-            return
-
         if lowered.startswith("imagine"):
             self._set_state(State.IMAGINE)
             return
 
-        self.log.write("ROOT: say 'play <move>' or 'imagine' to branch.", tag="INFO")
-
-    def _handle_play(self, text: str):
-        self.timer.reset()
-        lowered = text.lower()
-        if lowered == "stop":
-            self.log.write("PLAY: stop → WAIT_WAKE")
-            self._set_state(State.WAIT_WAKE)
+        if lowered.startswith("play"):
+            move = text[4:].strip()
+            if move:
+                self._process_play_move(move)
+            else:
+                self.log.write("ROOT: say 'play <move>' to move, or 'imagine'.", tag="INFO")
             return
 
-        self._process_play_move(text)
+        self.log.write("ROOT: say 'play <move>' or 'imagine' to branch.", tag="INFO")
 
     def _handle_imagine(self, text: str):
         self.timer.reset()
@@ -125,12 +108,15 @@ class FSMController:
     # Helpers
     # ============================================================
     def _process_play_move(self, move_text: str):
+        self.timer.reset()
         if not self._apply_main_move(move_text):
-            self.log.write("PLAY: try again or type 'stop' to cancel.", tag="INFO")
+            self.log.write("ROOT: invalid move, try again or say wake word later.", tag="INFO")
             return
 
+        # Valid move was made; refresh ROOT timer budget so follow-up commands (if any) start fresh
+        self.timer.reset()
         self._engine_counter_move()
-        self.log.write("PLAY turn finished → WAIT_WAKE")
+        self.log.write("Turn finished → WAIT_WAKE")
         self._set_state(State.WAIT_WAKE)
 
     def _apply_main_move(self, move_text: str):
@@ -167,10 +153,7 @@ class FSMController:
             self.log.write("State → WAIT_WAKE (listening for wake word)")
         elif state == State.ROOT:
             self.timer.arm(self.ROOT_TIMEOUT, start=True)
-            self.log.write("State → ROOT_COMMAND_MODE")
-        elif state == State.PLAY:
-            self.timer.arm(self.PLAY_TIMEOUT, start=True)
-            self.log.write("State → PLAY_MODE")
+            self.log.write("State → ROOT")
         elif state == State.IMAGINE:
             self.imag.start(self.board.board)
             self.timer.arm(self.IMAGINE_TIMEOUT, start=True)

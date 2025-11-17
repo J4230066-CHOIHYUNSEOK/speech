@@ -93,6 +93,11 @@ class ChessGUI:
         text = self.cmd_entry.get().strip()
         self.cmd_entry.delete(0, tk.END)
 
+        self.process_text(text)
+
+    def process_text(self, text: str):
+        """Centralized handler so both GUI entry and voice bridge share the same flow."""
+        text = text.strip()
         if text == "":
             return
 

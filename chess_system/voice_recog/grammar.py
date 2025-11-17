@@ -19,11 +19,18 @@ def load_grammar_for(st):
 
     if st == "ROOT":
         commands = ["play", "imagine", "evaluate", "explain"]
+        # play <piece> <file> <rank> / <piece> <file> <rank>
         for p in pieces:
             for f in files:
                 for r in ranks:
                     commands.append(f"play {p} {f} {r}")
                     commands.append(f"{p} {f} {r}")
+        # pawn destination only: play <file> <rank> / <file> <rank>
+        for f in files:
+            for r in ranks:
+                commands.append(f"play {f} {r}")
+                commands.append(f"{f} {r}")
+        # uci-like four tokens
         for f1 in files:
             for r1 in ranks:
                 for f2 in files:
