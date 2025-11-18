@@ -1,5 +1,5 @@
 import lwake
-
+# forked from local-wake github (https://github.com/st-matskevich/local-wake)
 # Record audio sample
 lwake.record("ref/sample.wav", duration=1, trim_silence=True)
 

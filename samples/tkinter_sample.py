@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# coding: utf-8
-#
 # Tkinter チェス GUI デモ
 # - 左: python-chess の盤面 (SVG → PNG → Tkinter)
 # - 右: 履歴ログ + コマンド入力 + 残りタイムバー
