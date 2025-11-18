@@ -29,5 +29,4 @@ python3 -m pip install --upgrade pip
 python3 -m pip install -r requirements.txt
 
 echo "Done. To run:"
-echo "  source .speech/bin/activate"
-echo "  python chess_system/main.py"
+
