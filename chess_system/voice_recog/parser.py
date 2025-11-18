@@ -123,6 +123,8 @@ def extract_command(text: str, state: str):
 
         # play + move
         if words and words[0] == "play":
+            if len(words) == 2 and words[1] == "castle":
+                return "play castle"
             move = parse_move(words[1:])
             if move:
                 return f"play {move}"
@@ -138,6 +140,10 @@ def extract_command(text: str, state: str):
     # IMAGINE : chess moves + imagine specific commands
     # ======================================================
     if state == "IMAGINE":
+        if len(words) >= 8: 
+            return None
+        if len(words) == 1 and words[0] == "castle":
+            return "castle"
         if len(words) == 1 and words[0] in common_cmds_imagine:
             return words[0]
 

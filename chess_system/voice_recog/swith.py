@@ -64,7 +64,7 @@ def wait_for_wake_word(stop_event: threading.Event | None = None):
         try:
             lwake.listen(
                 str(WAKE_REF_DIR),
-                threshold=0.05,
+                threshold=0.08,
                 method="embedding",
                 callback=handle_detection,
             )

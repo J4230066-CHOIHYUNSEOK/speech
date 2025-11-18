@@ -24,10 +24,8 @@ class ImagineSimulator:
         if self.board is None:
             raise RuntimeError("ImagineSimulator not started")
 
-        try:
-            candidate = self.board.parse_san(mov)
-        except Exception:
-            candidate = chess.Move.from_uci(mov)
+        mov = mov.strip()
+        candidate = self._parse_move(mov)
 
         if candidate not in self.board.legal_moves:
             raise ValueError("Illegal imagine move")
@@ -57,3 +55,28 @@ class ImagineSimulator:
         self.board.pop()
         self._history.pop()
         return True
+
+    def _parse_move(self, mov: str) -> chess.Move:
+        if self.board is None:
+            raise RuntimeError("ImagineSimulator not started")
+        if mov.lower() == "castle":
+            return self._castle_move()
+        try:
+            return self.board.parse_san(mov)
+        except Exception:
+            candidate = chess.Move.from_uci(mov)
+        return candidate
+
+    def _castle_move(self) -> chess.Move:
+        """Try short castle first, then long castle for the imagined board."""
+        assert self.board is not None
+        if self.board.turn == chess.WHITE:
+            candidates = ["e1g1", "e1c1"]
+        else:
+            candidates = ["e8g8", "e8c8"]
+
+        for uci in candidates:
+            move = chess.Move.from_uci(uci)
+            if move in self.board.legal_moves and self.board.is_castling(move):
+                return move
+        raise ValueError("Illegal imagine move")

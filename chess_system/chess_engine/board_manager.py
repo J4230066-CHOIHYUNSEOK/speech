@@ -27,6 +27,9 @@ class BoardManager:
         return {"uci": reply_uci, "san": san}
 
     def _parse_move(self, text):
+        text = text.strip()
+        if text.lower() == "castle":
+            return self._castle_move(self.board)
         try:
             move = self.board.parse_san(text)
         except Exception:
@@ -35,3 +38,20 @@ class BoardManager:
         if move not in self.board.legal_moves:
             raise ValueError("Illegal move")
         return move
+
+    def _castle_move(self, board: chess.Board) -> chess.Move:
+        """Try short (kingside) castle first, then long (queenside)."""
+        if board is None:
+            raise ValueError("Illegal move")
+
+        # Build candidate UCIs based on side to move.
+        if board.turn == chess.WHITE:
+            candidates = ["e1g1", "e1c1"]
+        else:
+            candidates = ["e8g8", "e8c8"]
+
+        for uci in candidates:
+            move = chess.Move.from_uci(uci)
+            if move in board.legal_moves and board.is_castling(move):
+                return move
+        raise ValueError("Illegal move")

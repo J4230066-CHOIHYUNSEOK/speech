@@ -14,11 +14,11 @@ def load_grammar_for(st):
                 for f2 in files:
                     for r2 in ranks:
                         commands.append(f"{f1} {r1} {f2} {r2}")
-        commands.extend(["return", "take", "explain", "evaluate", "back"])
+        commands.extend(["return", "take", "explain", "evaluate", "back", "castle"])
         return commands
 
     if st == "ROOT":
-        commands = ["play", "imagine", "evaluate", "explain"]
+        commands = ["play", "imagine", "evaluate", "explain", "play castle"]
         # play <piece> <file> <rank> / <piece> <file> <rank>
         for p in pieces:
             for f in files:
