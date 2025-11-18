@@ -11,13 +11,14 @@ ENV PYTHONUNBUFFERED=1
 # - PortAudio/ALSA for sounddevice
 # - libgl/libglib for OpenCV
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3 python3-pip python3-venv python3-tk \
-    stockfish \
-    portaudio19-dev libasound2-dev libjack-jackd2-0 \
-    libcairo2 libcairo2-dev libpango-1.0-0 libpangocairo-1.0-0 libpangoft2-1.0-0 \
-    libgdk-pixbuf-2.0-0 fonts-dejavu-core \
-    libgl1 libglib2.0-0 \
-    && rm -rf /var/lib/apt/lists/*
+python3 python3-pip python3-venv python3-tk \
+stockfish \
+portaudio19-dev libasound2-dev libjack-jackd2-0 \
+libcairo2 libcairo2-dev libpango-1.0-0 libpangocairo-1.0-0 libpangoft2-1.0-0 \
+libgdk-pixbuf-2.0-0 fonts-dejavu-core \
+libgl1 libglib2.0-0 \
+alsa-utils \
+&& rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
