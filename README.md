@@ -3,12 +3,10 @@
 
 ## セットアップ（Ubuntu）
 
-プロジェクトルートで以下を実行します（初回のみ）。
+ターミナルで以下を実行します。
 
 ```bash
 bash install.sh          # 依存パッケージ＋仮想環境(.speech)作成
-source .speech/bin/activate
-python chess_system/main.py
 ```
 
 ### conda環境が有効な場合の注意
@@ -20,16 +18,19 @@ env LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu \
     .speech/bin/python chess_system/main.py
 ```
 ## 起動
-
-GUI が立ち上がったら、bash上にmを入力することでwake wordを録音してください。  
-mが入力されたあとの二秒間録音されます。  
-事前に用意された音声ファイルがあればvoice_recog/refに入れてください。  
-サンプルwav fileの名前は sample.wavに設定してください。
+```bash
+source .speech/bin/activate
+python chess_system/main.py
+```
+GUI が立ち上がったら、ターミナルで `m` + Enter を押すと始まります。  
+`voice_recog/ref/sample.wav` に "hey chess" のサンプルが入っているので、それがwake wordとして使われています。   
+認識が弱い／別の wake word にしたい場合のみ `sample.wav` を削除してから      
+プログラムを実行してください。そしたら `m` + Enter 後の 2 秒が録音され、その音声が新しい wake word になります。  
+自前の音声ファイルを使うなら `voice_recog/ref/sample.wav` として置き換えてください。
 ## FSM モード
 
 1. **WAIT_WAKE**  
    - 常に「wake word」を待っています。  
-   - `hey chess` (英語) を入力すると ROOT へ。
 
 2. **ROOT**  
    - 10秒内にplay <move>かimagineと言ってください。  
@@ -38,7 +39,8 @@ mが入力されたあとの二秒間録音されます。
    - 10秒無入力 WAIT_WAKE に戻ります。
 
 3. **IMAGINE_MODE** 
-   - 読み筋シミュレータ。`<move>` で仮想盤面を進められます。  
+   - 読み筋シミュレータ
+   - imagine modeでは `play <move>` ではなく`<move>` だけで仮想盤面を進められます。  
 - `take` : Stockfish の候補手を仮想盤面に適用。  
 - `back` : IMAGINE 中に加えた指し手を 1 手だけ取り消す（開始位置まで戻るとそれ以上は undo できません）。  
    - `stop` : 状態維持（タイマーのみリセット）。  
@@ -49,8 +51,7 @@ mが入力されたあとの二秒間録音されます。
 
 - **History**: 入力と FSM ログ、エンジン手、ボード文字表示などが流れます。  
 - **Command Input**: すべての操作はここで打鍵することでも作動できます。  
-- **Timer**: 現在の状態の残り秒数。ROOT / IMAGINE で独立して作動。  
-- **Board Tint**: IMAGINE 中は 青系のフィルタが被さり、仮想盤であることが視覚的にわかります。
+- **Timer**: 現在の状態の残り時間 
 
 ## 注意点 
 - `StockfishEngine` は `/usr/games/stockfish` で起動します。別パスの場合はコンストラクタを修正してください。

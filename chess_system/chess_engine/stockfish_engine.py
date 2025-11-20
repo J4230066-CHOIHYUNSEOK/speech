@@ -3,6 +3,11 @@ import random
 import chess
 import chess.engine
 
+# Note: The path to the Stockfish executable varies by operating system.
+#   Linux:    /usr/games/stockfish
+#   macOS:    /usr/local/bin/stockfish 
+#   Windows:  "C:\\Program Files\\Stockfish\\stockfish.exe"
+# Update the `path` argument as needed for your environment.
 
 class StockfishEngine:
     def __init__(self, path="/usr/games/stockfish", depth: int = 12):
