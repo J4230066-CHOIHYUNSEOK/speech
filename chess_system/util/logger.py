@@ -25,7 +25,8 @@ class Logger:
         self._history.append(entry)
         print(entry)
         if self.gui:
-            self.gui.append_move_history(text)
+            # Rebuild history in GUI so move list stays accurate (including undo).
+            self.gui.refresh_history()
 
     def get_history(self):
         return list(self._history)

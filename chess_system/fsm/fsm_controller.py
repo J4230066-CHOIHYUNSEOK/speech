@@ -1,3 +1,5 @@
+import chess
+
 from .states import State
 
 
@@ -114,10 +116,9 @@ class FSMController:
             return
 
         # Valid move was made; refresh ROOT timer budget so follow-up commands (if any) start fresh
-        self.timer.reset()
         self._engine_counter_move()
-        self.log.write("Turn finished → WAIT_WAKE")
-        self._set_state(State.WAIT_WAKE)
+        self.timer.reset()
+        self.log.write("Turn finished")
 
     def _apply_main_move(self, move_text: str):
         try:
@@ -173,3 +174,18 @@ class FSMController:
         if self.state == State.IMAGINE and self.imag.board:
             return self.imag.board
         return self.board.board
+
+    # ------------------------------------------------------------
+    # History helpers for GUI
+    # ------------------------------------------------------------
+    def get_game_moves(self) -> list[chess.Move]:
+        """Return a copy of the main game move stack."""
+        return list(self.board.board.move_stack)
+
+    def get_imagine_moves(self) -> list[chess.Move]:
+        """Return a copy of the imagine move stack."""
+        return list(self.imag._history)
+
+    def get_imagine_base_board(self) -> chess.Board | None:
+        """Return the board state when IMAGINE started."""
+        return self.imag.base_board

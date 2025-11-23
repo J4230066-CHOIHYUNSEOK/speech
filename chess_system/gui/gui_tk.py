@@ -82,6 +82,7 @@ class ChessGUI:
 
         # 初期描画
         self.update_board()
+        self.refresh_history()
 
         # タイマー更新開始
         self._update_timer_bar()
@@ -106,6 +107,7 @@ class ChessGUI:
 
         # ボードが変化していれば更新
         self.update_board()
+        self.refresh_history()
 
         # タイマーをリセット（ROOT/PLAYなどのモードで使う）
         self.timer.reset()
@@ -130,8 +132,28 @@ class ChessGUI:
     # ---------------------------------------------------------
     # Move履歴 / ログ追加
     # ---------------------------------------------------------
-    def append_move_history(self, text):
-        self._write_text(self.history_box, text + "\n", append=True)
+    def refresh_history(self):
+        """Rebuild the history panel using proper move numbering."""
+        main_moves = self.fsm.get_game_moves()
+        imagine_moves = self.fsm.get_imagine_moves()
+        history_parts = []
+
+        main_text = self._format_move_pairs(chess.Board(), main_moves)
+        if main_text:
+            history_parts.append(main_text)
+
+        base = self.fsm.get_imagine_base_board()
+        if base and imagine_moves:
+            imag_text = self._format_move_pairs(base, imagine_moves)
+            if imag_text:
+                history_parts.append("Imagine:\n" + imag_text)
+
+        if history_parts:
+            combined = "\n\n".join(history_parts)
+        else:
+            combined = ""
+
+        self._write_text(self.history_box, combined, append=False)
 
     def show_fsm_message(self, text: str, tag: str = "FSM"):
         """Display only the latest FSM message (clears previous content)."""
@@ -170,3 +192,49 @@ class ChessGUI:
         widget.insert("end", text)
         widget.see("end")
         widget.config(state="disabled")
+
+    def _format_move_pairs(self, base_board: chess.Board, moves: list[chess.Move]) -> str:
+        """Return PGN-like lines (e.g., '1. e4 e5') for the given move list."""
+        if not moves:
+            return ""
+
+        board = base_board.copy()
+        lines = []
+        idx = 0
+
+        while idx < len(moves):
+            move_num = board.fullmove_number
+            if board.turn == chess.WHITE:
+                white_move = moves[idx]
+                white_san = board.san(white_move)
+                board.push(white_move)
+                idx += 1
+
+                black_san = ""
+                if idx < len(moves):
+                    black_move = moves[idx]
+                    black_san = board.san(black_move)
+                    board.push(black_move)
+                    idx += 1
+
+                line = f"{move_num}. {white_san}"
+                if black_san:
+                    line += f" {black_san}"
+            else:
+                # Black to move at this ply (rare but possible if starting mid-game)
+                black_move = moves[idx]
+                black_san = board.san(black_move)
+                board.push(black_move)
+                idx += 1
+
+                line = f"{move_num}... {black_san}"
+                if idx < len(moves):
+                    white_move = moves[idx]
+                    white_san = board.san(white_move)
+                    board.push(white_move)
+                    idx += 1
+                    line += f" {white_san}"
+
+            lines.append(line)
+
+        return "\n".join(lines)

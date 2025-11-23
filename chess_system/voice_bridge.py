@@ -75,6 +75,7 @@ class VoiceBridge:
 
         if processed:
             self.gui.update_board()
+            self.gui.refresh_history()
 
         # Keep polling from Tk thread
         self.root.after(100, self._poll_queue)
