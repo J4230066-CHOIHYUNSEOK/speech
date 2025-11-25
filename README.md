@@ -55,10 +55,9 @@ GUI が立ち上がったら、ターミナルで `m` + Enter を押すと始ま
 - **History**: move履歴が流れます。Imagine modeからreturnすると Imagineの履歴は消されます。  
 - **Command Input**: すべての操作はここで打鍵することでも作動できます。  
 - **Timer**: 現在の状態の残り時間 
-
+- **FSM Messages**: 音声入力で認識したコマンドや状態遷移のログが逐次流れます。聞き取りミスや現在のモードを確認するときに参照してください。  
 ## 注意点 
 - `StockfishEngine` は `/usr/games/stockfish` で起動するようにしています。別パスの場合は`chess_engine/stockfish_engine.py`よりパスを修正してください。
 
 ### スライド
 google slides リンク : [発表スライド](https://docs.google.com/presentation/d/1khmnrlEGaAiaSV3vvXJcYtvVh47HnAIGV0-X4NQ5l_k/edit?usp=sharing)
-
