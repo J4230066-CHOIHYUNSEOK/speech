@@ -6,7 +6,7 @@
      src="https://github.com/user-attachments/assets/64d8aaca-f13a-4191-ac29-2870cc80f967"
      width="250">
 
-Chess.com では矢印より先読みできるけど、初心者にはそれだけでもキャパオーバー。  
+Chess.com では矢印から先読みできるけど、初心者にはそれだけでもキャパオーバー。  
 声で「仮プレイ」しながらアイデアを横に展開できるチェスシステムがほしい。  
 そこで、音声で盤面を動かせて、仮想盤と実盤を行き来できる Vocal Chess を作りました。
 
@@ -58,7 +58,7 @@ GUI が立ち上がったら、ターミナルで `m` + Enter を押すと始ま
 
 ### Vocal Chessのフローチャート  
 ![flowchart](https://github.com/user-attachments/assets/3d25a14d-0147-4b27-a2cc-e8dee00f19b3)  
-(PLAY MODEは中側の処理に使われるだけであるため，気にしないでください。)
+(PLAY MODEは内部の処理に使われるだけであるため，気にしないでください。)
 ## GUI の見方
 
 <img alt="GUI"
