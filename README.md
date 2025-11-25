@@ -63,7 +63,7 @@ GUI が立ち上がったら、ターミナルで `m` + Enter を押すと始ま
 
 <img alt="GUI"
      src="https://github.com/user-attachments/assets/7e838b3d-ddd4-4030-9d42-c5ea3847bce5"
-     width="300">
+     width="700">
 
 
 - **History**: move履歴が流れます。Imagine modeからreturnすると Imagineの履歴は消されます。  
