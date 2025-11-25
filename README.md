@@ -6,7 +6,7 @@
      src="https://github.com/user-attachments/assets/64d8aaca-f13a-4191-ac29-2870cc80f967"
      width="250">
 
-Chess.com の矢印ヒントより先読みはできるけど、初心者にはそれだけでもキャパオーバー。  
+Chess.com では矢印より先読みできるけど、初心者にはそれだけでもキャパオーバー。  
 声で「仮プレイ」しながらアイデアを横に展開できるチェスシステムがほしい。  
 そこで、音声で盤面を動かせて、仮想盤と実盤を行き来できる Vocal Chess を作りました。
 
@@ -71,4 +71,4 @@ GUI が立ち上がったら、ターミナルで `m` + Enter を押すと始ま
 - Castlingは実装されています。ROOT上では一般のムーブの形式と同じく`play castle`と言ってください。(アンパサンは実装されてません）
 ## 資料
 発表スライド(pdf)とdemo動画は`docs`にあります。  
-google slides リンク : [発表スライド](https://docs.google.com/presentation/d/1khmnrlEGaAiaSV3vvXJcYtvVh47HnAIGV0-X4NQ5l_k/edit?usp=sharing)
+google slides リンク : https://docs.google.com/presentation/d/1khmnrlEGaAiaSV3vvXJcYtvVh47HnAIGV0-X4NQ5l_k/edit?usp=sharing
