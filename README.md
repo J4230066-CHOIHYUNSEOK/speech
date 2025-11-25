@@ -61,7 +61,11 @@ GUI が立ち上がったら、ターミナルで `m` + Enter を押すと始ま
 (PLAY MODEは中側の処理に使われるだけであるため，気にしないでください。)
 ## GUI の見方
 
-![GUI](https://github.com/user-attachments/assets/7e838b3d-ddd4-4030-9d42-c5ea3847bce5)  
+<img alt="GUI"
+     src="https://github.com/user-attachments/assets/7e838b3d-ddd4-4030-9d42-c5ea3847bce5"
+     width="300">
+
+
 - **History**: move履歴が流れます。Imagine modeからreturnすると Imagineの履歴は消されます。  
 - **Command Input**: すべての操作はここで打鍵することでも作動できます。  
 - **Timer**: 現在の状態の残り時間 
